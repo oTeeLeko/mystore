@@ -10,6 +10,24 @@ import (
 
 type Querier interface {
 	AddCustomer(ctx context.Context, arg AddCustomerParams) error
+	AddInventory(ctx context.Context, arg AddInventoryParams) error
+	AddOrder(ctx context.Context, arg AddOrderParams) error
+	AddProduct(ctx context.Context, arg AddProductParams) error
+	DeleteCustomer(ctx context.Context, id string) error
+	DeleteInventory(ctx context.Context, id string) error
+	DeleteOrder(ctx context.Context, id string) error
+	DeleteProduct(ctx context.Context, id string) error
+	GetCustomer(ctx context.Context, id string) (Customer, error)
+	GetInventory(ctx context.Context, id string) (Inventory, error)
+	GetListCustomers(ctx context.Context, arg GetListCustomersParams) ([]Customer, error)
+	GetListInventories(ctx context.Context, arg GetListInventoriesParams) ([]Inventory, error)
+	GetListOrders(ctx context.Context, arg GetListOrdersParams) ([]GetListOrdersRow, error)
+	GetListProducts(ctx context.Context, arg GetListProductsParams) ([]Product, error)
+	GetOrder(ctx context.Context, id string) (GetOrderRow, error)
+	GetProduct(ctx context.Context, id string) (Product, error)
+	UpdateCustomer(ctx context.Context, arg UpdateCustomerParams) error
+	UpdateInventoryQuantity(ctx context.Context, arg UpdateInventoryQuantityParams) error
+	UpdateProduct(ctx context.Context, arg UpdateProductParams) error
 }
 
 var _ Querier = (*Queries)(nil)

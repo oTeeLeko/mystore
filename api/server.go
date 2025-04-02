@@ -38,6 +38,19 @@ func (server *Server) setupRouter() {
 func CustomerRoutes(router *gin.Engine, server *Server) {
 	customerGroup := router.Group("api/customers")
 	customerGroup.POST("/create", server.createCustomer)
+	customerGroup.GET("", server.getCustomerByID)
+	customerGroup.GET("/list", server.getListCustomers)
+	customerGroup.DELETE("/delete", server.deleteCustomer)
+	customerGroup.PUT("/update/:id", server.updateCustomer)
+}
+
+func ProductRoutes(router *gin.Engine, server *Server) {
+	productGroup := router.Group("api/products")
+	productGroup.POST("/create", server.createProduct)
+	productGroup.GET("", server.getProductByID)
+	productGroup.GET("/list", server.getListProducts)
+	productGroup.DELETE("/delete", server.deleteProduct)
+	productGroup.PUT("/update/:id", server.updateProduct)
 }
 
 func (server *Server) Start(address string) error {
