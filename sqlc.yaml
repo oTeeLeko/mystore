@@ -3,7 +3,7 @@ packages:
   - name: "db"
     path: "./db/sqlc"
     queries: "./db/query/"
-    schema: "./db/migrations/"
+    schema: "./db/migrations/000001_init_schema.up.sql"
     engine: "mysql"
     sql_package: "database/sql"
     emit_json_tags: true

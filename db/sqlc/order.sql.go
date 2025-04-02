@@ -14,27 +14,20 @@ const addOrder = `-- name: AddOrder :exec
 INSERT INTO Orders (
   CustomerID,
   ProductID,
-  Quantity,
-  Amount
+  Quantity
 ) VALUES (
-  ?, ?, ?, ?
+  ?, ?, ?
 )
 `
 
 type AddOrderParams struct {
-	Customerid string  `json:"customerid"`
-	Productid  string  `json:"productid"`
-	Quantity   int32   `json:"quantity"`
-	Amount     float64 `json:"amount"`
+	Customerid string `json:"customerid"`
+	Productid  string `json:"productid"`
+	Quantity   int32  `json:"quantity"`
 }
 
 func (q *Queries) AddOrder(ctx context.Context, arg AddOrderParams) error {
-	_, err := q.db.ExecContext(ctx, addOrder,
-		arg.Customerid,
-		arg.Productid,
-		arg.Quantity,
-		arg.Amount,
-	)
+	_, err := q.db.ExecContext(ctx, addOrder, arg.Customerid, arg.Productid, arg.Quantity)
 	return err
 }
 

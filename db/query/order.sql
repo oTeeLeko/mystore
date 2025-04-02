@@ -2,10 +2,9 @@
 INSERT INTO Orders (
   CustomerID,
   ProductID,
-  Quantity,
-  Amount
+  Quantity
 ) VALUES (
-  ?, ?, ?, ?
+  ?, ?, ?
 );
 
 -- name: GetOrder :one
