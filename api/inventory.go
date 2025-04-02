@@ -9,19 +9,19 @@ import (
 	"github.com/oTeeLeko/mystore/model"
 )
 
-func (server *Server) createProduct(ctx *gin.Context) {
-	var req model.CreateProductRequest
+func (server *Server) createInventory(ctx *gin.Context) {
+	var req model.CreateInventoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	arg := db.AddProductParams{
-		Name:  req.Name,
-		Price: req.Price,
+	arg := db.AddInventoryParams{
+		Productid: req.ProductID,
+		Quantity:  req.Quantity,
 	}
 
-	if err := server.store.AddProduct(ctx, arg); err != nil {
+	if err := server.store.AddInventory(ctx, arg); err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
@@ -29,8 +29,8 @@ func (server *Server) createProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, successResponse("Create"))
 }
 
-func (server *Server) updateProduct(ctx *gin.Context) {
-	var req model.UpdateProductRequest
+func (server *Server) updateInventory(ctx *gin.Context) {
+	var req model.UpdateInventoryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -41,13 +41,12 @@ func (server *Server) updateProduct(ctx *gin.Context) {
 		return
 	}
 
-	arg := db.UpdateProductParams{
-		ID:    req.ID,
-		Name:  req.Name,
-		Price: req.Price,
+	arg := db.UpdateInventoryQuantityParams{
+		Productid: req.ProductID,
+		Quantity:  req.Quantity,
 	}
 
-	if err := server.store.UpdateProduct(ctx, arg); err != nil {
+	if err := server.store.UpdateInventoryQuantity(ctx, arg); err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
@@ -59,13 +58,13 @@ func (server *Server) updateProduct(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, successResponse("Update"))
 }
 
-func (server *Server) getProductByID(ctx *gin.Context) {
+func (server *Server) getInventoryByID(ctx *gin.Context) {
 	var req model.GetIDRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
-	customer, err := server.store.GetProduct(ctx, req.ID)
+	customer, err := server.store.GetInventory(ctx, req.ID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
@@ -78,7 +77,7 @@ func (server *Server) getProductByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, customer)
 }
 
-func (server *Server) getListProducts(ctx *gin.Context) {
+func (server *Server) getListInventories(ctx *gin.Context) {
 	var req model.PaginationRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
@@ -95,12 +94,12 @@ func (server *Server) getListProducts(ctx *gin.Context) {
 		offset = (req.PageID - 1) * req.PageSize
 	}
 
-	arg := db.GetListProductsParams{
+	arg := db.GetListInventoriesParams{
 		Limit:  limit,
 		Offset: offset,
 	}
 
-	customers, err := server.store.GetListProducts(ctx, arg)
+	customers, err := server.store.GetListInventories(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -109,14 +108,14 @@ func (server *Server) getListProducts(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, customers)
 }
 
-func (server *Server) deleteProduct(ctx *gin.Context) {
+func (server *Server) deleteInventory(ctx *gin.Context) {
 	var req model.GetIDRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
 
-	if err := server.store.DeleteProduct(ctx, req.ID); err != nil {
+	if err := server.store.DeleteInventory(ctx, req.ID); err != nil {
 		if err == sql.ErrNoRows {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return

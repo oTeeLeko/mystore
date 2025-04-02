@@ -31,6 +31,7 @@ func (server *Server) setupRouter() {
 	router.Use(middleware.Logger())
 
 	CustomerRoutes(router, server)
+	ProductRoutes(router, server)
 
 	server.router = router
 }
@@ -51,6 +52,15 @@ func ProductRoutes(router *gin.Engine, server *Server) {
 	productGroup.GET("/list", server.getListProducts)
 	productGroup.DELETE("/delete", server.deleteProduct)
 	productGroup.PUT("/update/:id", server.updateProduct)
+}
+
+func InventoryRoutes(router *gin.Engine, server *Server) {
+	inventoryGroup := router.Group("api/inventories")
+	inventoryGroup.POST("/create", server.createInventory)
+	inventoryGroup.GET("", server.getInventoryByID)
+	inventoryGroup.GET("/list", server.getListInventories)
+	inventoryGroup.DELETE("/delete", server.deleteInventory)
+	inventoryGroup.PUT("/update/:id", server.updateInventory)
 }
 
 func (server *Server) Start(address string) error {

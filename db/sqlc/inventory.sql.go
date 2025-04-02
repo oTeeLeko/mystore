@@ -7,6 +7,7 @@ package db
 
 import (
 	"context"
+	"database/sql"
 )
 
 const addInventory = `-- name: AddInventory :exec
@@ -39,26 +40,44 @@ func (q *Queries) DeleteInventory(ctx context.Context, id string) error {
 }
 
 const getInventory = `-- name: GetInventory :one
-SELECT id, productid, quantity, created, modified FROM Inventories
-WHERE ID = ?
+SELECT 
+  Inventories.ID,
+  Inventories.ProductID,
+  Products.Name,
+  Inventories.Quantity
+FROM Inventories
+LEFT JOIN Products ON Inventories.ProductID = Products.ID
+WHERE Inventories.ID = ?
 LIMIT 1
 `
 
-func (q *Queries) GetInventory(ctx context.Context, id string) (Inventory, error) {
+type GetInventoryRow struct {
+	ID        string         `json:"id"`
+	Productid string         `json:"productid"`
+	Name      sql.NullString `json:"name"`
+	Quantity  int32          `json:"quantity"`
+}
+
+func (q *Queries) GetInventory(ctx context.Context, id string) (GetInventoryRow, error) {
 	row := q.db.QueryRowContext(ctx, getInventory, id)
-	var i Inventory
+	var i GetInventoryRow
 	err := row.Scan(
 		&i.ID,
 		&i.Productid,
+		&i.Name,
 		&i.Quantity,
-		&i.Created,
-		&i.Modified,
 	)
 	return i, err
 }
 
 const getListInventories = `-- name: GetListInventories :many
-SELECT id, productid, quantity, created, modified FROM Inventories
+SELECT 
+  Inventories.ID,
+  Inventories.ProductID,
+  Products.Name,
+  Inventories.Quantity
+FROM Inventories
+LEFT JOIN Products ON Inventories.ProductID = Products.ID
 LIMIT ? OFFSET ?
 `
 
@@ -67,21 +86,27 @@ type GetListInventoriesParams struct {
 	Offset int32 `json:"offset"`
 }
 
-func (q *Queries) GetListInventories(ctx context.Context, arg GetListInventoriesParams) ([]Inventory, error) {
+type GetListInventoriesRow struct {
+	ID        string         `json:"id"`
+	Productid string         `json:"productid"`
+	Name      sql.NullString `json:"name"`
+	Quantity  int32          `json:"quantity"`
+}
+
+func (q *Queries) GetListInventories(ctx context.Context, arg GetListInventoriesParams) ([]GetListInventoriesRow, error) {
 	rows, err := q.db.QueryContext(ctx, getListInventories, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []Inventory{}
+	items := []GetListInventoriesRow{}
 	for rows.Next() {
-		var i Inventory
+		var i GetListInventoriesRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Productid,
+			&i.Name,
 			&i.Quantity,
-			&i.Created,
-			&i.Modified,
 		); err != nil {
 			return nil, err
 		}

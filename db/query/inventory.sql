@@ -7,12 +7,24 @@ INSERT INTO Inventories (
 );
 
 -- name: GetInventory :one
-SELECT * FROM Inventories
-WHERE ID = ?
+SELECT 
+  Inventories.ID,
+  Inventories.ProductID,
+  Products.Name,
+  Inventories.Quantity
+FROM Inventories
+LEFT JOIN Products ON Inventories.ProductID = Products.ID
+WHERE Inventories.ID = ?
 LIMIT 1;
 
 -- name: GetListInventories :many
-SELECT * FROM Inventories
+SELECT 
+  Inventories.ID,
+  Inventories.ProductID,
+  Products.Name,
+  Inventories.Quantity
+FROM Inventories
+LEFT JOIN Products ON Inventories.ProductID = Products.ID
 LIMIT ? OFFSET ?;
 
 -- name: DeleteInventory :exec
