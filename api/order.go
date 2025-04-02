@@ -32,7 +32,7 @@ func (server *Server) createOrder(ctx *gin.Context) {
 
 func (server *Server) getOrderByID(ctx *gin.Context) {
 	var req model.GetIDRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}

@@ -44,7 +44,7 @@ func CustomerRoutes(router *gin.Engine, server *Server) {
 	customerGroup.GET("", server.getCustomerByID)
 	customerGroup.GET("/list", server.getListCustomers)
 	customerGroup.DELETE("/delete", server.deleteCustomer)
-	customerGroup.PUT("/update/:id", server.updateCustomer)
+	customerGroup.PUT("/update", server.updateCustomer)
 }
 
 func ProductRoutes(router *gin.Engine, server *Server) {
@@ -53,7 +53,7 @@ func ProductRoutes(router *gin.Engine, server *Server) {
 	productGroup.GET("", server.getProductByID)
 	productGroup.GET("/list", server.getListProducts)
 	productGroup.DELETE("/delete", server.deleteProduct)
-	productGroup.PUT("/update/:id", server.updateProduct)
+	productGroup.PUT("/update", server.updateProduct)
 }
 
 func InventoryRoutes(router *gin.Engine, server *Server) {
@@ -62,7 +62,7 @@ func InventoryRoutes(router *gin.Engine, server *Server) {
 	inventoryGroup.GET("", server.getInventoryByID)
 	inventoryGroup.GET("/list", server.getListInventories)
 	inventoryGroup.DELETE("/delete", server.deleteInventory)
-	inventoryGroup.PUT("/update/:id", server.updateInventory)
+	inventoryGroup.PUT("/update", server.updateInventory)
 }
 
 func OrderRoutes(router *gin.Engine, server *Server) {

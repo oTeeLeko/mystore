@@ -36,7 +36,7 @@ func (server *Server) updateInventory(ctx *gin.Context) {
 		return
 	}
 
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}
@@ -60,7 +60,7 @@ func (server *Server) updateInventory(ctx *gin.Context) {
 
 func (server *Server) getInventoryByID(ctx *gin.Context) {
 	var req model.GetIDRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
+	if err := ctx.ShouldBindQuery(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
 	}

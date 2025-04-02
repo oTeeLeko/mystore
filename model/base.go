@@ -6,5 +6,5 @@ type PaginationRequest struct {
 }
 
 type GetIDRequest struct {
-	ID string `from:"id"`
+	ID string `form:"id"`
 }
