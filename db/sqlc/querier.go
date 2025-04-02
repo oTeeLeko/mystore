@@ -18,7 +18,7 @@ type Querier interface {
 	DeleteOrder(ctx context.Context, id string) error
 	DeleteProduct(ctx context.Context, id string) error
 	GetCustomer(ctx context.Context, id string) (Customer, error)
-	GetInventory(ctx context.Context, id string) (GetInventoryRow, error)
+	GetInventory(ctx context.Context, productid string) (GetInventoryRow, error)
 	GetListCustomers(ctx context.Context, arg GetListCustomersParams) ([]Customer, error)
 	GetListInventories(ctx context.Context, arg GetListInventoriesParams) ([]GetListInventoriesRow, error)
 	GetListOrders(ctx context.Context, arg GetListOrdersParams) ([]GetListOrdersRow, error)

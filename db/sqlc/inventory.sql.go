@@ -47,7 +47,7 @@ SELECT
   Inventories.Quantity
 FROM Inventories
 LEFT JOIN Products ON Inventories.ProductID = Products.ID
-WHERE Inventories.ID = ?
+WHERE Inventories.ProductID = ?
 LIMIT 1
 `
 
@@ -58,8 +58,8 @@ type GetInventoryRow struct {
 	Quantity  int32          `json:"quantity"`
 }
 
-func (q *Queries) GetInventory(ctx context.Context, id string) (GetInventoryRow, error) {
-	row := q.db.QueryRowContext(ctx, getInventory, id)
+func (q *Queries) GetInventory(ctx context.Context, productid string) (GetInventoryRow, error) {
+	row := q.db.QueryRowContext(ctx, getInventory, productid)
 	var i GetInventoryRow
 	err := row.Scan(
 		&i.ID,

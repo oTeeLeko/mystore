@@ -14,7 +14,7 @@ SELECT
   Inventories.Quantity
 FROM Inventories
 LEFT JOIN Products ON Inventories.ProductID = Products.ID
-WHERE Inventories.ID = ?
+WHERE Inventories.ProductID = ?
 LIMIT 1;
 
 -- name: GetListInventories :many

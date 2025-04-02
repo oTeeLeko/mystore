@@ -7,12 +7,28 @@ import (
 	"github.com/gin-gonic/gin"
 	db "github.com/oTeeLeko/mystore/db/sqlc"
 	"github.com/oTeeLeko/mystore/model"
+	"github.com/oTeeLeko/mystore/util"
 )
 
 func (server *Server) createOrder(ctx *gin.Context) {
 	var req model.CreateOrderRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	product, err := server.store.GetInventory(ctx, req.ProductID)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			ctx.JSON(http.StatusNotFound, errorResponse(err))
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if err := util.CheckQuantity(int(product.Quantity), int(req.Quantity)); err != nil {
+		ctx.JSON(http.StatusConflict, errorResponse(err))
 		return
 	}
 
