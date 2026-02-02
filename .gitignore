@@ -1,0 +1,42 @@
+# Ignore .env file
+app.env
+
+# Ignore logs directory and all subfolders (e.g. logs/2025/)
+logs/
+logs/**
+
+# Ignore individual log files just in case
+*.log
+
+# Binary files
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# Build folders
+/bin/
+build/
+dist/
+
+# IDE/editor folders
+.vscode/
+.idea/
+*.swp
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Vendor (optional)
+vendor/
+
+# Swagger docs
+docs/
+
+# Uploaded images
+uploads/
+uploads/**
+

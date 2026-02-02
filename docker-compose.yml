@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  api:
+    image: mystore:latest
+    container_name: mystore
+    ports:
+      - "8080:8080"
+    restart: always
+    volumes:
+      - ./app.env:/app/app.env
+      - ./logs:/app/logs

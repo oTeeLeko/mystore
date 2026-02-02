@@ -1,21 +1,24 @@
 package api
 
 import (
-	"fmt"
-
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	db "github.com/oTeeLeko/mystore/db/sqlc"
+	"github.com/oTeeLeko/mystore/api/controllers"
+	"github.com/oTeeLeko/mystore/api/routes"
+	store "github.com/oTeeLeko/mystore/core/sqlstore"
 	"github.com/oTeeLeko/mystore/middleware"
 	"github.com/oTeeLeko/mystore/util"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Server struct {
 	config util.Config
-	store  db.Store
+	store  *store.Store
 	router *gin.Engine
 }
 
-func NewServer(config util.Config, store db.Store) (*Server, error) {
+func NewServer(config util.Config, store *store.Store) (*Server, error) {
 	server := &Server{
 		config: config,
 		store:  store,
@@ -28,62 +31,24 @@ func NewServer(config util.Config, store db.Store) (*Server, error) {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
-	router.Use(middleware.Logger())
+	router.Use(middleware.AccessLogger())
 
-	CustomerRoutes(router, server)
-	ProductRoutes(router, server)
-	InventoryRoutes(router, server)
-	OrderRoutes(router, server)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.DefaultModelsExpandDepth(-1)))
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Authorization"},
+	}))
+
+	routes.CustomerRoutes(router, controllers.NewCustomerHandler(server.store.CustomerRepo))
+	routes.ProductRoutes(router, controllers.NewProductHandler(server.store.ProductRepo))
+	routes.InventoryRoutes(router, controllers.NewInventoryHandler(server.store.InventoryRepo))
+	routes.OrderRoutes(router, controllers.NewOrderHandler(server.store.OrderRepo))
 
 	server.router = router
 }
 
-func CustomerRoutes(router *gin.Engine, server *Server) {
-	customerGroup := router.Group("api/customers")
-	customerGroup.POST("/create", server.createCustomer)
-	customerGroup.GET("", server.getCustomerByID)
-	customerGroup.GET("/list", server.getListCustomers)
-	customerGroup.DELETE("/delete", server.deleteCustomer)
-	customerGroup.PUT("/update", server.updateCustomer)
-}
-
-func ProductRoutes(router *gin.Engine, server *Server) {
-	productGroup := router.Group("api/products")
-	productGroup.POST("/create", server.createProduct)
-	productGroup.GET("", server.getProductByID)
-	productGroup.GET("/list", server.getListProducts)
-	productGroup.DELETE("/delete", server.deleteProduct)
-	productGroup.PUT("/update", server.updateProduct)
-}
-
-func InventoryRoutes(router *gin.Engine, server *Server) {
-	inventoryGroup := router.Group("api/inventories")
-	inventoryGroup.POST("/create", server.createInventory)
-	inventoryGroup.GET("", server.getInventoryByID)
-	inventoryGroup.GET("/list", server.getListInventories)
-	inventoryGroup.DELETE("/delete", server.deleteInventory)
-	inventoryGroup.PUT("/update", server.updateInventory)
-}
-
-func OrderRoutes(router *gin.Engine, server *Server) {
-	orderGroup := router.Group("api/orders")
-	orderGroup.POST("/create", server.createOrder)
-	orderGroup.GET("", server.getOrderByID)
-	orderGroup.GET("/list", server.getListOrders)
-	orderGroup.DELETE("/delete", server.deleteOrder)
-}
-
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
-}
-
-func errorResponse(err error) gin.H {
-	return gin.H{"error": err.Error()}
-}
-
-func successResponse(message string) gin.H {
-	return gin.H{
-		"status":  "success",
-		"message": fmt.Sprintf("%s successfully", message),
-	}
 }
